@@ -3,25 +3,21 @@
     --ios-bg: #F2F2F7;
     --ios-card: #FFFFFF;
     --ios-grey: #8E8E93;
-    --ios-red: #FF3B30;
     --safe-top: env(safe-area-inset-top, 44px);
 }
 
-body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--ios-bg); margin: 0; -webkit-font-smoothing: antialiased; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--ios-bg); margin: 0; padding-bottom: 50px; }
 
-.safe-header { padding-top: var(--safe-top); padding-left: 20px; padding-bottom: 10px; }
+/* Safe Area Fix für iPhone 16 Pro */
+.safe-header { padding-top: calc(var(--safe-top) + 20px); padding-left: 20px; padding-bottom: 10px; }
 h1 { font-size: 34px; font-weight: 700; margin: 0; }
 
 .fixed-nav {
     position: sticky; top: 0; width: 100%; height: 50px;
-    padding-top: var(--safe-top); background: rgba(255, 255, 255, 0.9);
+    padding-top: var(--safe-top); background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px); display: flex; align-items: center; 
-    justify-content: space-between; padding: 0 15px; z-index: 999; border-bottom: 0.5px solid #C6C6C8;
+    justify-content: space-between; padding: 0 20px; z-index: 999; border-bottom: 0.5px solid #C6C6C8;
 }
-
-.nav-title { font-weight: 600; font-size: 16px; }
-.back-btn { color: var(--ios-blue); border: none; background: none; font-size: 17px; }
-.print-btn { background: var(--ios-blue); color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; }
 
 .section-title { font-size: 13px; text-transform: uppercase; color: var(--ios-grey); margin: 25px 20px 8px; }
 .ios-card { background: var(--ios-card); margin: 0 16px; border-radius: 12px; overflow: hidden; }
@@ -35,20 +31,20 @@ input, select, textarea { border: none; background: none; font-size: 17px; color
 .split input { text-align: center; width: 45%; }
 .divider { width: 0.5px; height: 24px; background: #C6C6C8; }
 
-.ios-btn-add, .ios-btn-update { width: calc(100% - 32px); margin: 20px 16px; padding: 14px; border-radius: 12px; font-size: 17px; font-weight: 600; border: none; }
+.ios-btn-add, .ios-btn-update { width: calc(100% - 32px); margin: 15px 16px; padding: 14px; border-radius: 12px; font-size: 17px; font-weight: 600; border: none; }
 .ios-btn-add { background: #fff; color: var(--ios-blue); }
 .ios-btn-update { background: #FF9500; color: #fff; }
-.ios-btn-danger { background: none; color: var(--ios-red); width: 100%; border: none; margin-top: 15px; font-size: 14px; }
+.ios-btn-danger { background: none; color: #FF3B30; width: 100%; border: none; margin-top: 15px; font-size: 14px; }
 .ios-btn-primary { width: calc(100% - 32px); margin: 30px 16px 100px; padding: 18px; background: var(--ios-blue); color: #fff; border-radius: 14px; font-weight: 600; border: none; }
 
 .list-item { background: #fff; margin: 8px 16px; padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; }
 
-/* PDF Output */
-.paper-page { background: #fff; padding: 20px; color: #000; }
-.pdf-item { display: flex; border-bottom: 1px solid #000; padding: 25px 0; page-break-inside: avoid; }
-.pdf-svg { width: 170px; margin-right: 25px; flex-shrink: 0; }
-.pdf-data { flex: 1; font-size: 11px; line-height: 1.4; }
-.pdf-data h3 { margin: 0 0 5px; font-size: 14px; background: #f0f0f0; padding: 4px; }
-.pdf-note { margin-top: 10px; background: #fff9c4; padding: 5px; border-left: 3px solid #fbc02d; font-style: italic; }
+/* Vorschau */
+.paper-page { background: #fff; padding: 30px; color: #000; }
+.pdf-item { display: flex; border-bottom: 1.5px solid #000; padding: 25px 0; page-break-inside: avoid; }
+.pdf-svg { width: 190px; margin-right: 25px; flex-shrink: 0; }
+.pdf-data { flex: 1; font-size: 12px; }
+.pdf-data h3 { margin: 0 0 5px; font-size: 15px; background: #f0f0f0; padding: 5px; border-radius: 4px; }
+.pdf-note { margin-top: 8px; background: #fff9c4; padding: 6px; border-left: 3px solid #fbc02d; font-style: italic; }
 
 @media print { .no-print, .fixed-nav { display: none !important; } .paper-page { padding: 0; } }
