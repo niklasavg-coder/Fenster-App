@@ -1,73 +1,79 @@
-function skizzeErstellen() {
-    const breite = document.getElementById('breite').value;
-    const hoehe = document.getElementById('hoehe').value;
-    const typ = document.getElementById('typ').value;
-    const richtung = document.getElementById('richtung').value;
-
-    if (!breite || !hoehe) {
-        alert("Bitte Breite und Höhe eingeben.");
-        return;
-    }
-
-    // Wir bauen das SVG dynamisch zusammen.
-    // Wir nutzen eine feste "Leinwand" von 300x400 Einheiten für die Zeichnung.
-    let svgContent = `
-        <svg viewBox="-50 -50 400 500" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#000" />
-                </marker>
-            </defs>
-
-            <rect x="0" y="0" width="300" height="400" class="fenster-rahmen" />
-
-            <line x1="0" y1="-20" x2="300" y2="-20" class="masslinie" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <line x1="0" y1="-25" x2="0" y2="0" class="masslinie" /> <line x1="300" y1="-25" x2="300" y2="0" class="masslinie" /> <text x="150" y="-30" text-anchor="middle" class="mass-text">${breite} mm</text>
-
-            <line x1="-20" y1="0" x2="-20" y2="400" class="masslinie" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <line x1="-25" y1="0" x2="0" y2="0" class="masslinie" /> <line x1="-25" y1="400" x2="0" y2="400" class="masslinie" /> <text x="-30" y="200" text-anchor="middle" transform="rotate(-90, -30, 200)" class="mass-text">${hoehe} mm</text>
-
-            ${generiereOeffnungsSymbol(typ, richtung)}
-
-        </svg>
-    `;
-
-    // SVG in den Container packen und anzeigen
-    document.getElementById('svgWrapper').innerHTML = svgContent;
-    document.getElementById('skizzenContainer').style.display = 'block';
+function toggleUI() {
+    const rolllo = document.getElementById('rollloTyp').value;
+    document.getElementById('kabelBox').style.display = (rolllo === "ELEKTRO") ? "flex" : "none";
 }
 
-// Hilfsfunktion: Entscheidet, welche Dreiecke gezeichnet werden müssen
-function generiereOeffnungsSymbol(typ, richtung) {
-    if (typ === 'FEST') {
-        // Festverglasung bekommt oft ein einfaches Kreuz oder gar nichts.
-        // Wir lassen es erstmal leer für eine saubere Ansicht.
-        return ''; 
+function editMode() {
+    document.getElementById('input-view').style.display = 'block';
+    document.getElementById('preview-view').style.display = 'none';
+    window.scrollTo(0,0);
+}
+
+function generatePreview() {
+    const b = document.getElementById('breite').value;
+    const h = document.getElementById('hoehe').value;
+    const projekt = document.getElementById('projektName').value || "Unbenannt";
+    const pos = document.getElementById('position').value || "Keine Position";
+    
+    if(!b || !h) return alert("Bitte Breite und Höhe eingeben!");
+
+    // Ansicht umschalten
+    document.getElementById('input-view').style.display = 'none';
+    document.getElementById('preview-view').style.display = 'block';
+
+    // Kopfzeile füllen
+    document.getElementById('pdfTitel').innerText = projekt;
+    document.getElementById('pdfPos').innerText = "📍 " + pos;
+    document.getElementById('pdfDatum').innerText = new Date().toLocaleDateString('de-DE');
+
+    // SVG Skizze (Profi-Logik für BT = Balkontür)
+    const typ = document.getElementById('elemTyp').value;
+    let svg = `<svg viewBox="-50 -60 400 520" xmlns="http://www.w3.org/2000/svg" style="background:white;">
+        <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#000" /></marker></defs>
+        
+        <rect x="0" y="0" width="300" height="400" stroke="#000" fill="none" stroke-width="3" />`;
+
+    // Wenn Balkontür: Schwelle unten einzeichnen
+    if (typ === "BT") {
+        svg += `<line x1="0" y1="390" x2="300" y2="390" stroke="#000" stroke-width="1" />`;
     }
 
-    let pfade = '';
-    // Koordinaten für das 300x400 Rechteck
-    const top = 0; const bottom = 400;
-    const left = 0; const right = 300;
-    const midX = 150; const midY = 200;
+    // Maßketten
+    svg += `<line x1="0" y1="-20" x2="300" y2="-20" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="150" y="-30" text-anchor="middle" font-size="14" font-weight="bold">${b} mm</text>
+            <line x1="-25" y1="0" x2="-25" y2="400" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="-40" y="200" text-anchor="middle" transform="rotate(-90, -40, 200)" font-size="14" font-weight="bold">${h} mm</text>`;
 
-    // Dreh-Symbol (Das Dreieck, das die horizontale Öffnung anzeigt)
-    if (richtung === 'L') {
-        // DIN Links: Bänder links, Griff rechts. Spitze zeigt nach rechts.
-        // Dreieck von Links-Oben -> Rechts-Mitte -> Links-Unten
-        pfade += `<polygon points="${left},${top} ${right},${midY} ${left},${bottom}" class="oeffnungs-symbol"/>`;
+    // Flügel-Skizze
+    if (typ === "2") {
+        svg += `<line x1="150" y1="0" x2="150" y2="400" stroke="#000" />
+                <polyline points="0,0 150,200 0,400" fill="none" stroke="#666" stroke-dasharray="5,5" />
+                <polyline points="300,0 150,200 300,400" fill="none" stroke="#666" stroke-dasharray="5,5" />`;
     } else {
-        // DIN Rechts: Bänder rechts, Griff links. Spitze zeigt nach links.
-        // Dreieck von Rechts-Oben -> Links-Mitte -> Rechts-Unten
-        pfade += `<polygon points="${right},${top} ${left},${midY} ${right},${bottom}" class="oeffnungs-symbol"/>`;
+        svg += `<polyline points="300,0 0,200 300,400" fill="none" stroke="#666" stroke-dasharray="5,5" />`;
     }
 
-    // Kipp-Symbol (Das zusätzliche untere Dreieck bei DK)
-    if (typ === 'DK') {
-        // Spitze zeigt immer nach unten, Basis ist oben
-        // Dreieck von Links-Oben -> Mitte-Unten -> Rechts-Oben
-        pfade += `<polygon points="${left},${top} ${midX},${bottom} ${right},${top}" class="oeffnungs-symbol"/>`;
-    }
+    svg += `</svg>`;
+    document.getElementById('svgWrapper').innerHTML = svg;
 
-    return pfade;
+    // Tabelle füllen
+    document.getElementById('infoGrid').innerHTML = `
+        <div class="info-item"><strong>Typ:</strong> ${typ === "BT" ? "Balkontür" : typ + "-flg. Fenster"}</div>
+        <div class="info-item"><strong>Glas:</strong> ${document.getElementById('glasTyp').value}</div>
+        <div class="info-item"><strong>Rollladen:</strong> ${document.getElementById('rollloTyp').value}</div>
+        <div class="info-item"><strong>Maß:</strong> ${b} x ${h} mm</div>
+    `;
+
+    window.scrollTo(0,0);
+}
+
+function previewFoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('pdfImg').src = e.target.result;
+            document.getElementById('fotoInPdf').style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 }
