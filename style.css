@@ -1,40 +1,92 @@
-/* ... Bisherige iOS Styles beibehalten ... */
-
-.back-btn {
-    border: none; background: none; color: var(--ios-blue);
-    font-size: 17px; cursor: pointer; padding: 0;
+:root {
+    --ios-blue: #007AFF;
+    --ios-bg: #F2F2F7;
+    --ios-card: #FFFFFF;
+    --ios-grey: #8E8E93;
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
 }
 
-/* Das "Blatt Papier" in der App */
-.paper-page {
-    background: white;
-    padding: 30px;
-    border-radius: 4px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    min-height: 500px;
-    color: black;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--ios-bg);
+    margin: 0;
+    color: #000;
+    /* Verhindert Abschneiden an Rändern */
+    padding: var(--safe-top) 0 var(--safe-bottom) 0;
 }
 
-.pdf-header {
-    display: flex; justify-content: space-between;
-    border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px;
+header {
+    padding: 20px 20px 10px;
+    background: var(--ios-bg);
 }
 
-.info-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; font-size: 14px; margin-top: 10px;
+h1 { font-size: 34px; font-weight: 700; margin: 0; }
+.section-title { font-size: 13px; text-transform: uppercase; color: var(--ios-grey); margin: 20px 20px 8px; }
+
+.ios-card {
+    background: var(--ios-card);
+    margin: 0 16px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.info-item { border-bottom: 1px solid #eee; padding: 4px 0; }
+.ios-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid #C6C6C8;
+}
 
-.foto-container img {
-    width: 100%; border-radius: 5px; margin-top: 10px;
-    border: 1px solid #ccc;
+.ios-row:last-child { border-bottom: none; }
+
+.label { flex: 1; font-size: 17px; }
+
+input, select {
+    border: none; background: none; font-size: 17px;
+    color: var(--ios-blue); outline: none; text-align: right;
+}
+
+.inline-inputs { justify-content: space-between; }
+.inline-inputs input { text-align: center; width: 45%; }
+.separator { width: 1px; height: 20px; background: #C6C6C8; }
+
+/* Buttons */
+.ios-btn-add {
+    display: block; width: calc(100% - 32px); margin: 15px 16px;
+    padding: 12px; background: #fff; color: var(--ios-blue);
+    border: none; border-radius: 10px; font-size: 17px; font-weight: 500;
+}
+
+.ios-btn-primary {
+    display: block; width: calc(100% - 32px); margin: 30px 16px;
+    padding: 16px; background: var(--ios-blue); color: #fff;
+    border: none; border-radius: 12px; font-size: 17px; font-weight: 600;
+}
+
+/* Fenster Liste Element */
+.list-item {
+    background: #fff; margin: 8px 16px; padding: 12px;
+    border-radius: 10px; display: flex; justify-content: space-between;
+}
+
+/* PDF Layout (Kompakt) */
+.paper-page { background: #fff; padding: 40px; color: #000; }
+.pdf-item {
+    display: flex; border-bottom: 1px solid #000;
+    padding: 15px 0; page-break-inside: avoid;
+}
+.pdf-svg { width: 180px; margin-right: 20px; }
+.pdf-data { flex: 1; font-size: 12px; }
+.pdf-data h3 { margin: 0 0 5px 0; font-size: 14px; }
+
+.preview-nav {
+    display: flex; justify-content: space-between; padding: 15px;
+    background: #fff; border-bottom: 1px solid #ddd;
 }
 
 @media print {
-    body { background: white; }
-    #preview-view { display: block !important; }
-    #input-view, .no-print { display: none !important; }
-    .paper-page { box-shadow: none; padding: 0; }
+    .no-print { display: none !important; }
+    body { padding: 0; }
+    .paper-page { padding: 0; }
 }

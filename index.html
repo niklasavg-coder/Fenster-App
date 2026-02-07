@@ -3,105 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aufmaß-Profi iOS</title>
+    <title>Fenster-Aufmaß Profi</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div id="app-container">
-        
-        <div id="input-view">
-            <header>
+        <header class="no-print">
+            <div class="header-content">
+                <p id="current-date"></p>
                 <h1>Aufmaß</h1>
-            </header>
-            <main>
-                <section class="ios-group">
-                    <div class="ios-row">
-                        <label>Projekt</label>
-                        <input type="text" id="projektName" placeholder="Müller OG">
-                    </div>
-                    <div class="ios-row">
-                        <label>Position</label>
-                        <input type="text" id="position" placeholder="z.B. Pos. 01 / Küche">
-                    </div>
-                </section>
+            </div>
+        </header>
 
-                <section class="ios-group">
-                    <div class="ios-row two-col">
-                        <input type="number" id="breite" placeholder="Breite mm" inputmode="numeric">
-                        <input type="number" id="hoehe" placeholder="Höhe mm" inputmode="numeric">
-                    </div>
-                    <div class="ios-row">
-                        <select id="elemTyp" onchange="toggleUI()">
-                            <option value="1">1-flg. Fenster</option>
-                            <option value="2">2-flg. Stulp-Fenster</option>
-                            <option value="BT">Balkontür</option>
-                        </select>
-                    </div>
-                </section>
-
-                <section class="ios-group">
-                    <div class="ios-row">
-                        <label>Glas</label>
-                        <select id="glasTyp">
-                            <option value="2-fach">2-fach Standard</option>
-                            <option value="3-fach">3-fach Premium</option>
-                            <option value="VSG">Sicherheitsglas</option>
-                        </select>
-                    </div>
-                    <div class="ios-row">
-                        <label>Rollladen</label>
-                        <select id="rollloTyp" onchange="toggleUI()">
-                            <option value="NEIN">Kein</option>
-                            <option value="ELEKTRO">Elektro</option>
-                        </select>
-                    </div>
-                </section>
-
-                <section class="ios-group">
-                    <div class="ios-row">
-                        <label for="fotoInput" class="camera-btn">📷 Foto hinzufügen</label>
-                        <input type="file" id="fotoInput" accept="image/*" capture="environment" onchange="previewFoto(this)">
-                    </div>
-                </section>
-
-                <button class="ios-btn-primary" onclick="generatePreview()">Vorschau anzeigen</button>
-            </main>
-        </div>
-
-        <div id="preview-view" style="display:none;">
-            <header class="no-print">
-                <button class="back-btn" onclick="editMode()">← Bearbeiten</button>
-                <h1>Vorschau</h1>
-            </header>
-            <main>
-                <div class="paper-page">
-                    <div class="pdf-header">
-                        <div>
-                            <h2 id="pdfTitel">Projektname</h2>
-                            <p id="pdfPos" style="font-weight: bold; color: var(--ios-blue);"></p>
-                        </div>
-                        <div id="pdfDatum" style="text-align: right; font-size: 12px;"></div>
-                    </div>
-                    
-                    <div id="svgWrapper"></div>
-
-                    <div class="tech-specs">
-                        <h3>Technische Details</h3>
-                        <div id="infoGrid" class="info-grid"></div>
-                    </div>
-
-                    <div id="fotoInPdf" class="foto-container">
-                        <h3>Baustellensituation</h3>
-                        <img id="pdfImg" src="">
-                    </div>
+        <main class="no-print">
+            <div class="ios-card">
+                <div class="ios-row">
+                    <input type="text" id="projektName" placeholder="Projektname / Kunde">
                 </div>
-                <button class="ios-btn-secondary no-print" onclick="window.print()">Als PDF speichern / Senden</button>
-            </main>
-        </div>
+            </div>
 
+            <h2 class="section-title">Neues Fenster</h2>
+            <div class="ios-card">
+                <div class="ios-row">
+                    <span class="label">Position</span>
+                    <input type="text" id="position" placeholder="z.B. Pos. 01 / Küche">
+                </div>
+                <div class="ios-row inline-inputs">
+                    <input type="number" id="breite" placeholder="Breite mm" inputmode="numeric">
+                    <div class="separator"></div>
+                    <input type="number" id="hoehe" placeholder="Höhe mm" inputmode="numeric">
+                </div>
+                <div class="ios-row">
+                    <span class="label">Typ</span>
+                    <select id="elemTyp" onchange="updateUI()">
+                        <option value="1">1-flg. Fenster</option>
+                        <option value="2">2-flg. Stulp</option>
+                        <option value="BT">Balkontür</option>
+                    </select>
+                </div>
+                <div class="ios-row">
+                    <span class="label">Glas</span>
+                    <select id="glasTyp">
+                        <option value="3-fach">3-fach Premium</option>
+                        <option value="2-fach">2-fach Standard</option>
+                        <option value="Spezial">Spezialglas</option>
+                    </select>
+                </div>
+                <div class="ios-row">
+                    <span class="label">Antrieb</span>
+                    <select id="motorTyp" onchange="updateUI()">
+                        <option value="KEIN">Ohne Motor</option>
+                        <option value="ELEKTRO">Elektro-Motor</option>
+                    </select>
+                </div>
+                <div id="kabel-row" class="ios-row" style="display:none;">
+                    <span class="label">Kabel / Motorseite</span>
+                    <select id="kabelSeite">
+                        <option value="RL">Oben Links (Motor Links)</option>
+                        <option value="RR">Oben Rechts (Motor Rechts)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="ios-btn-add" onclick="addToList()">+ In Liste speichern</button>
+
+            <h2 class="section-title">Erfasste Fenster (<span id="count">0</span>)</h2>
+            <div id="fenster-liste"></div>
+
+            <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">PDF Vorschau generieren</button>
+        </main>
+
+        <div id="preview-screen" style="display:none;">
+            <div class="preview-nav no-print">
+                <button onclick="hidePreview()">← Bearbeiten</button>
+                <button class="print-trigger" onclick="window.print()">Drucken / PDF</button>
+            </div>
+            <div class="paper-page" id="pdf-content">
+                </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
