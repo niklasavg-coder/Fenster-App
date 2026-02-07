@@ -4,99 +4,56 @@
     --ios-card: #FFFFFF;
     --ios-grey: #8E8E93;
     --ios-red: #FF3B30;
-    --safe-top: env(safe-area-inset-top);
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 20px);
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    background-color: var(--ios-bg);
-    margin: 0;
-    color: #000;
-    -webkit-font-smoothing: antialiased;
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--ios-bg); margin: 0; padding-bottom: env(safe-area-inset-bottom); -webkit-font-smoothing: antialiased; }
+
+.safe-header { padding-top: var(--safe-top); padding-left: 20px; padding-bottom: 10px; }
+h1 { font-size: 34px; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
+
+/* Dynamic Island Navigation */
+.fixed-nav {
+    position: sticky; top: 0; width: 100%; height: 50px;
+    padding-top: var(--safe-top); background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding-left: 15px; padding-right: 15px; z-index: 9999; border-bottom: 0.5px solid #C6C6C8;
 }
 
-header {
-    padding-top: calc(var(--safe-top) + 20px);
-    padding-left: 20px;
-    padding-bottom: 10px;
-}
+.nav-title { font-weight: 600; font-size: 17px; }
+.back-btn { color: var(--ios-blue); border: none; background: none; font-size: 17px; padding: 0; }
+.print-btn { background: var(--ios-blue); color: #fff; border: none; padding: 7px 14px; border-radius: 8px; font-weight: 600; }
 
-#header-date { font-size: 13px; text-transform: uppercase; color: var(--ios-grey); font-weight: 600; }
-h1 { font-size: 34px; font-weight: 700; margin: 0; }
-
-.section-title { font-size: 13px; text-transform: uppercase; color: var(--ios-grey); margin: 25px 32px 8px; font-weight: 400; }
-
-.ios-card {
-    background: var(--ios-card);
-    margin: 0 16px;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.ios-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border-bottom: 0.5px solid #C6C6C8;
-    min-height: 44px;
-}
-
+.section-title { font-size: 13px; text-transform: uppercase; color: var(--ios-grey); margin: 25px 32px 8px; letter-spacing: 0.3px; }
+.ios-card { background: var(--ios-card); margin: 0 16px; border-radius: 12px; overflow: hidden; }
+.ios-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 0.5px solid #C6C6C8; min-height: 44px; }
 .ios-row:last-child { border-bottom: none; }
 .ios-row-multiline { padding: 12px 16px; background: #fff; }
 
-.label { flex: 1; font-size: 17px; }
-
-input, select, textarea {
-    border: none; background: none; font-size: 17px;
-    color: var(--ios-blue); outline: none; width: 100%;
-    font-family: inherit;
-}
-
-textarea { resize: none; color: #000; }
-input::placeholder { color: #C6C6C8; }
+input, select, textarea { border: none; background: none; font-size: 17px; color: var(--ios-blue); outline: none; width: 100%; font-family: inherit; }
+textarea { color: #000; resize: none; }
 
 .split { justify-content: space-between; }
 .split input { text-align: center; width: 45%; }
 .divider { width: 0.5px; height: 24px; background: #C6C6C8; }
 
 /* Buttons */
-.ios-btn-add {
-    display: block; width: calc(100% - 32px); margin: 20px 16px;
-    padding: 14px; background: #fff; color: var(--ios-blue);
-    border: none; border-radius: 12px; font-size: 17px; font-weight: 500;
-}
+.ios-btn-add, .ios-btn-update { width: calc(100% - 32px); margin: 20px 16px; padding: 14px; border-radius: 12px; font-size: 17px; font-weight: 600; border: none; }
+.ios-btn-add { background: #fff; color: var(--ios-blue); }
+.ios-btn-update { background: #FF9500; color: #fff; }
+.ios-btn-danger { background: none; color: var(--ios-red); width: 100%; border: none; margin-top: 10px; font-size: 14px; }
+.ios-btn-primary { width: calc(100% - 32px); margin: 40px 16px; padding: 18px; background: var(--ios-blue); color: #fff; border-radius: 14px; font-size: 17px; font-weight: 600; border: none; }
 
-.ios-btn-primary {
-    display: block; width: calc(100% - 32px); margin: 40px 16px 80px;
-    padding: 18px; background: var(--ios-blue); color: #fff;
-    border: none; border-radius: 14px; font-size: 17px; font-weight: 600;
-}
+.list-item { background: #fff; margin: 8px 16px; padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 
-/* Liste */
-.list-item {
-    background: #fff; margin: 8px 16px; padding: 16px;
-    border-radius: 12px; display: flex; justify-content: space-between;
-}
+/* PDF Paper Styling */
+.paper-page { background: #fff; padding: 25px; color: #000; }
+.pdf-item { display: flex; border-bottom: 1.5px solid #000; padding: 20px 0; page-break-inside: avoid; }
+.pdf-svg { width: 180px; margin-right: 25px; flex-shrink: 0; }
+.pdf-data { flex: 1; font-size: 12px; line-height: 1.5; }
+.pdf-data h3 { margin: 0 0 5px 0; font-size: 15px; background: #f2f2f7; padding: 4px 8px; border-radius: 4px; }
+.pdf-note-box { margin-top: 8px; padding: 6px; background: #fff9c4; border-left: 3px solid #fbc02d; font-style: italic; }
 
-/* PDF / Vorschau */
-.preview-nav {
-    padding-top: var(--safe-top);
-    display: flex; justify-content: space-between; padding: 15px 20px;
-    background: #fff; border-bottom: 1px solid #ddd;
-}
-
-.back-btn { border: none; background: none; color: var(--ios-blue); font-size: 17px; }
-.print-btn { background: var(--ios-blue); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; }
-
-.paper-page { background: #fff; padding: 40px; color: #000; }
-.pdf-item { display: flex; border-bottom: 1px solid #000; padding: 25px 0; page-break-inside: avoid; }
-.pdf-svg { width: 200px; margin-right: 30px; }
-.pdf-data { flex: 1; font-size: 13px; line-height: 1.6; }
-.pdf-data h3 { margin: 0 0 8px 0; font-size: 16px; border-bottom: 1px solid #eee; }
-.pdf-notes { margin-top: 10px; font-style: italic; color: #444; background: #f9f9f9; padding: 8px; border-radius: 4px; }
-
-@media print {
-    .no-print { display: none !important; }
-    #preview-view { display: block !important; }
-    .paper-page { padding: 0; }
-}
+@media print { .no-print, .fixed-nav { display: none !important; } .paper-page { padding: 0; } }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Fenster-Aufmaß Pro</title>
+    <title>Aufmaß Pro Ultra</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
@@ -11,120 +11,91 @@
 </head>
 <body>
     <div id="app-container">
-        <div id="input-view" class="no-print">
-            <header>
-                <div class="header-content">
+        <div id="input-view" class="view">
+            <header class="safe-header">
+                <div class="header-inner">
                     <span id="header-date"></span>
                     <h1>Aufmaß Pro</h1>
                 </div>
             </header>
 
             <main>
-                <h2 class="section-title">Projekt-Info</h2>
+                <h2 class="section-title">Projekt-Stammdaten</h2>
                 <div class="ios-card">
                     <div class="ios-row">
-                        <input type="text" id="projektName" placeholder="Projektname (Pflichtfeld) *" required>
+                        <input type="text" id="projektName" placeholder="Kunde / Projektname *" required>
                     </div>
                     <div class="ios-row">
-                        <input type="text" id="systemName" placeholder="Profilsystem (z.B. Möller Optimax)">
+                        <input type="text" id="systemName" placeholder="Profilsystem (z.B. Möller Optimax)" value="Möller Optimax">
                     </div>
                 </div>
 
-                <h2 class="section-title">Element-Daten</h2>
+                <h2 class="section-title">Fenster-Erfassung</h2>
                 <div class="ios-card">
-                    <div class="ios-row">
-                        <span class="label">Position</span>
-                        <input type="text" id="position" placeholder="z.B. Pos. 01 / Küche *" required>
-                    </div>
+                    <div class="ios-row"><span class="label">Position</span><input type="text" id="position" placeholder="z.B. Pos. 01 / Küche"></div>
                     <div class="ios-row split">
-                        <input type="number" id="breite" placeholder="Breite mm *" inputmode="numeric" required>
+                        <input type="number" id="breite" placeholder="Breite mm *" inputmode="numeric">
                         <div class="divider"></div>
-                        <input type="number" id="hoehe" placeholder="Höhe mm *" inputmode="numeric" required>
+                        <input type="number" id="hoehe" placeholder="Höhe mm *" inputmode="numeric">
                     </div>
                     <div class="ios-row">
                         <span class="label">Element-Typ</span>
                         <select id="elemTyp" onchange="updateUI()">
                             <option value="1">1-flg. Fenster</option>
-                            <option value="2">2-flg. Stulp-Fenster</option>
+                            <option value="2">2-flg. Stulp</option>
                             <option value="BT">Balkontür (1-flg)</option>
                             <option value="2BT">Balkontür (2-flg Stulp)</option>
                         </select>
                     </div>
-                </div>
-
-                <div id="fluegel-config" style="display:none;">
-                    <h2 class="section-title">Flügel-Funktion</h2>
-                    <div class="ios-card">
-                        <div class="ios-row">
-                            <span class="label">Flügel Links</span>
-                            <select id="typL">
-                                <option value="DK">Dreh-Kipp</option>
-                                <option value="D">Dreh</option>
-                                <option value="FEST">Festverglast</option>
-                            </select>
-                        </div>
-                        <div class="ios-row">
-                            <span class="label">Flügel Rechts</span>
-                            <select id="typR">
-                                <option value="DK">Dreh-Kipp</option>
-                                <option value="D">Dreh</option>
-                                <option value="FEST">Festverglast</option>
-                            </select>
-                        </div>
+                    <div class="ios-row">
+                        <span class="label">Beschlag Links (F1)</span>
+                        <select id="typL"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
+                    </div>
+                    <div id="row-typR" class="ios-row" style="display:none;">
+                        <span class="label">Beschlag Rechts (F2)</span>
+                        <select id="typR"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
                     </div>
                 </div>
 
-                <h2 class="section-title">Rollladen & Antrieb</h2>
+                <h2 class="section-title">Technik & Rollo</h2>
                 <div class="ios-card">
                     <div class="ios-row">
-                        <span class="label">Rollladen</span>
+                        <span class="label">Rollladen-System</span>
                         <select id="rollloArt" onchange="updateUI()">
                             <option value="KEIN">Kein Rollladen</option>
-                            <option value="AUFSATZ">Aufsatzrollladen</option>
-                            <option value="VOR">Vorsatzrollladen</option>
+                            <option value="AUFSATZ">Aufsatz (Roma RA2)</option>
+                            <option value="VOR">Vorsatz-Kasten</option>
                         </select>
                     </div>
-                    <div id="motor-config" style="display:none;">
-                        <div class="ios-row">
-                            <span class="label">Motor-Seite</span>
-                            <select id="motorSeite">
-                                <option value="L">Motor Links</option>
-                                <option value="R">Motor Rechts</option>
-                            </select>
-                        </div>
-                        <div class="ios-row">
-                            <span class="label">Kabelaustritt</span>
-                            <select id="kabelSeite">
-                                <option value="L">Kabel Links</option>
-                                <option value="R">Kabel Rechts</option>
-                            </select>
-                        </div>
+                    <div id="motor-box" style="display:none;">
+                        <div class="ios-row"><span class="label">Motor-Seite</span><select id="motorSeite"><option value="L">Links</option><option value="R">Rechts</option></select></div>
+                        <div class="ios-row"><span class="label">Kabelauslass</span><select id="kabelSeite"><option value="L">Links</option><option value="R">Rechts</option></select></div>
                     </div>
                 </div>
 
                 <h2 class="section-title">Anmerkungen</h2>
-                <div class="ios-card">
-                    <div class="ios-row-multiline">
-                        <textarea id="notizen" placeholder="Besonderheiten (z.B. FBA, Verbreiterungen, Farbe...)" rows="3"></textarea>
-                    </div>
+                <div class="ios-card"><div class="ios-row-multiline"><textarea id="notizen" placeholder="Notizen (z.B. FBA, Verbreiterungen, Sonderfarbe...)" rows="3"></textarea></div></div>
+
+                <div class="btn-group">
+                    <button id="add-btn" class="ios-btn-add" onclick="saveItem()">+ In Liste speichern</button>
+                    <button id="update-btn" class="ios-btn-update" style="display:none;" onclick="saveItem()">Änderung übernehmen</button>
                 </div>
 
-                <button class="ios-btn-add" onclick="validateAndAdd()">+ In Liste speichern</button>
-
-                <h2 class="section-title">Aktuelle Liste (<span id="count">0</span>)</h2>
+                <h2 class="section-title">Aufmaß-Liste (<span id="count">0</span>)</h2>
                 <div id="fenster-liste"></div>
+                <button id="btn-clear" class="ios-btn-danger" style="display:none;" onclick="clearAll()">Komplette Liste löschen</button>
 
-                <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">Vorschau & PDF</button>
+                <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">Vorschau & PDF Export</button>
             </main>
         </div>
 
-        <div id="preview-view" style="display:none;">
-            <div class="preview-nav no-print">
-                <button class="back-btn" onclick="hidePreview()">← Bearbeiten</button>
-                <button class="print-btn" onclick="window.print()">Drucken / PDF</button>
+        <div id="preview-view" class="view" style="display:none;">
+            <div class="fixed-nav">
+                <button class="back-btn" onclick="hidePreview()">← Editieren</button>
+                <div class="nav-title">PDF Vorschau</div>
+                <button class="print-btn" onclick="window.print()">Senden</button>
             </div>
-            <div class="paper-page" id="pdf-content">
-                </div>
+            <div class="paper-page" id="pdf-content"></div>
         </div>
     </div>
     <script src="script.js"></script>
