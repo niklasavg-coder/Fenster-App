@@ -1,15 +1,11 @@
-let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_V9')) || [];
+let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_V10')) || [];
 let editId = null;
 
 function updateUI() {
     const elem = document.getElementById('elemTyp').value;
     const rolllo = document.getElementById('rollloArt').value;
-    
-    // Flügel-Auswahl Logik
     document.getElementById('row-f2').style.display = (elem === '2' || elem === '2BT') ? 'flex' : 'none';
     document.getElementById('row-din').style.display = (elem === '1' || elem === 'BT') ? 'flex' : 'none';
-    
-    // Motor-Optionen
     document.getElementById('motor-config').style.display = (rolllo !== 'KEIN') ? 'block' : 'none';
 }
 
@@ -17,11 +13,11 @@ function saveItem() {
     const proj = document.getElementById('projektName').value;
     const b = document.getElementById('breite').value;
     const h = document.getElementById('hoehe').value;
-    if(!proj || !b || !h) return alert("Projekt, Breite und Höhe sind Pflicht!");
+    if(!proj || !b || !h) return alert("Pflichtfelder fehlen!");
 
     const data = {
         proj, b, h,
-        pos: document.getElementById('position').value || "Fenster",
+        pos: document.getElementById('position').value || "Position",
         typ: document.getElementById('elemTyp').value,
         typL: document.getElementById('typL').value,
         typR: document.getElementById('typR').value,
@@ -39,7 +35,7 @@ function saveItem() {
         fensterListe[idx] = data;
     } else { fensterListe.push(data); }
 
-    localStorage.setItem('FensterProDB_V9', JSON.stringify(fensterListe));
+    localStorage.setItem('FensterProDB_V10', JSON.stringify(fensterListe));
     resetForm(); render();
 }
 
@@ -58,7 +54,6 @@ function edit(id) {
     document.getElementById('motorSeite').value = f.motor;
     document.getElementById('kabelSeite').value = f.kabel;
     document.getElementById('notizen').value = f.notizen;
-    
     document.getElementById('add-btn').style.display = 'none';
     document.getElementById('update-btn').style.display = 'block';
     updateUI(); window.scrollTo({top: 0, behavior: 'smooth'});
@@ -71,61 +66,60 @@ function render() {
             <span><strong>${f.pos}</strong>: ${f.b}x${f.h}mm</span>
             <div class="actions">
                 <span style="color:var(--ios-blue); font-weight:600;" onclick="edit(${f.id})">Edit</span>
-                <span style="color:#FF3B30; margin-left:15px;" onclick="remove(${f.id})">X</span>
+                <span style="color:#FF3B30; margin-left:15px; font-weight:600;" onclick="remove(${f.id})">X</span>
             </div>
         </div>`).join('');
     document.getElementById('count').innerText = fensterListe.length;
     document.getElementById('btn-preview').style.display = fensterListe.length > 0 ? 'block' : 'none';
+    document.getElementById('btn-clear').style.display = fensterListe.length > 0 ? 'block' : 'none';
 }
 
-function remove(id) { if(confirm("Löschen?")) { fensterListe = fensterListe.filter(x => x.id !== id); localStorage.setItem('FensterProDB_V9', JSON.stringify(fensterListe)); render(); } }
-function clearAll() { if(confirm("Projekt löschen?")) { fensterListe = []; localStorage.removeItem('FensterProDB_V9'); render(); } }
+function remove(id) { if(confirm("Löschen?")) { fensterListe = fensterListe.filter(x => x.id !== id); localStorage.setItem('FensterProDB_V10', JSON.stringify(fensterListe)); render(); } }
+function clearAll() { if(confirm("Gesamtes Projekt löschen?")) { fensterListe = []; localStorage.removeItem('FensterProDB_V10'); render(); } }
 
 function generateSVG(f) {
     const is2flg = (f.typ === '2' || f.typ === '2BT');
     const isBT = (f.typ === 'BT' || f.typ === '2BT');
     const hasAufsatz = (f.rolllo === 'AUFSATZ');
     
-    // Das Fenster-Rahmen-Maß startet unter dem Kasten
-    const frameTop = hasAufsatz ? 80 : 0;
+    // SVG Skalierung
+    const frameTop = hasAufsatz ? 70 : 0;
     const frameHeight = 400 - frameTop;
 
-    let svg = `<svg viewBox="-95 -125 470 610" xmlns="http://www.w3.org/2000/svg" style="background:white;">
+    let svg = `<svg viewBox="-100 -120 480 620" xmlns="http://www.w3.org/2000/svg" style="background:white;">
         <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#000" /></marker></defs>`;
 
     if(hasAufsatz) {
-        svg += `<rect x="0" y="0" width="300" height="80" fill="#f8f8f8" stroke="#000" stroke-width="2" />
-                <text x="150" y="45" text-anchor="middle" font-size="14" font-weight="bold">AUFSATZROLLO</text>`;
-        
+        svg += `<rect x="0" y="0" width="300" height="70" fill="#f0f0f0" stroke="#000" stroke-width="2" />
+                <text x="150" y="30" text-anchor="middle" font-size="12" font-weight="bold">AUFSATZROLLO</text>`;
+        // Markierung auf dem Kasten
         const motX = f.motor === 'L' ? 30 : 270;
         const kabX = f.kabel === 'L' ? 60 : 240;
-        svg += `<circle cx="${motX}" cy="30" r="7" fill="blue" /> <text x="${motX}" y="55" text-anchor="middle" font-size="9" fill="blue" font-weight="bold">MOTOR</text>`;
-        svg += `<circle cx="${kabX}" cy="30" r="7" fill="red" /> <text x="${kabX}" y="55" text-anchor="middle" font-size="9" fill="red" font-weight="bold">KABEL</text>`;
+        svg += `<circle cx="${motX}" cy="50" r="7" fill="blue" /> <text x="${motX}" y="65" text-anchor="middle" font-size="9" fill="blue">MOTOR</text>`;
+        svg += `<circle cx="${kabX}" cy="50" r="7" fill="red" /> <text x="${kabX}" y="65" text-anchor="middle" font-size="9" fill="red">KABEL</text>`;
     }
 
-    // Rahmen
     svg += `<rect x="0" y="${frameTop}" width="300" height="${frameHeight}" fill="none" stroke="#000" stroke-width="4" />`;
 
     // Maßketten (Gesamtmaß inkl. Rollo)
-    svg += `<line x1="0" y1="-75" x2="300" y2="-75" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <text x="150" y="-85" text-anchor="middle" font-size="26" font-weight="bold">${f.b} mm</text>
-            <line x1="-75" y1="5" x2="-75" y2="395" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <text x="-85" y="200" text-anchor="middle" transform="rotate(-90, -85, 200)" font-size="26" font-weight="bold">${f.h} mm</text>`;
+    svg += `<line x1="0" y1="-80" x2="300" y2="-80" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="150" y="-95" text-anchor="middle" font-size="28" font-weight="bold">${f.b} mm</text>
+            <line x1="-85" y1="5" x2="-85" y2="395" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="-95" y="200" text-anchor="middle" transform="rotate(-90, -95, 200)" font-size="28" font-weight="bold">${f.h} mm</text>`;
 
-    const drawDIN = (x, w, typ, din) => {
+    const drawDIN = (x, w, typ, side) => {
         if(typ === 'FEST') return "";
-        // Dreh-Symbol (Basis an Bandseite, Spitze an Griffseite)
-        const griffL = (din === 'R'); 
-        let res = `<polyline points="${griffL?x+w-10:x+10},${frameTop+15} ${griffL?x+10:x+w-10},${frameTop+(frameHeight/2)} ${griffL?x+w-10:x+10},${385}" fill="none" stroke="#777" stroke-dasharray="10,5" />`;
-        // Kipp-Symbol (SPITZE NACH OBEN)
-        if(typ === 'DK') res += `<polyline points="${x+15},385 ${x+w/2},${frameTop+15} ${x+w-15},385" fill="none" stroke="#777" stroke-dasharray="10,5" />`;
+        const hingeR = (side === 'R'); // DIN R: Bänder Rechts, Griff Links
+        // Dreh-Symbol
+        let res = `<polyline points="${hingeR?x+w-10:x+10},${frameTop+15} ${hingeR?x+10:x+w-10},${frameTop+(frameHeight/2)} ${hingeR?x+w-10:x+10},${385}" fill="none" stroke="#666" stroke-dasharray="10,5" />`;
+        // Kipp-Symbol: SPITZE NACH OBEN (DIN Konform)
+        if(typ === 'DK') res += `<polyline points="${x+15},385 ${x+w/2},${frameTop+15} ${x+w-15},385" fill="none" stroke="#666" stroke-dasharray="10,5" />`;
         return res;
     };
 
     if(is2flg) {
         svg += `<line x1="150" y1="${frameTop}" x2="150" y2="400" stroke="#000" stroke-width="2" />`;
-        svg += drawDIN(0, 150, f.typL, 'R'); // Flügel L hat Griff meist rechts am Stulp
-        svg += drawDIN(150, 150, f.typR, 'L'); // Flügel R hat Griff meist links am Stulp
+        svg += drawDIN(0, 150, f.typL, 'R') + drawDIN(150, 150, f.typR, 'L');
     } else {
         svg += drawDIN(0, 300, f.typL, f.din);
     }
@@ -138,15 +132,15 @@ function showPreview() {
     document.getElementById('input-view').style.display = 'none';
     document.getElementById('preview-view').style.display = 'block';
     const proj = document.getElementById('projektName').value;
-    let html = `<h2>Projekt: ${proj}</h2><p>Erstellt: ${new Date().toLocaleDateString()}</p><hr>`;
+    let html = `<h2>Projekt: ${proj}</h2><p>Erstellt: ${new Date().toLocaleDateString()}</p><hr style="border:1px solid #000;">`;
     fensterListe.forEach(f => {
         html += `<div class="pdf-item">
             <div class="pdf-svg">${generateSVG(f)}</div>
             <div class="pdf-data">
                 <h3>${f.pos}</h3>
-                <p><strong>Außenmaß:</strong> ${f.b} x ${f.h} mm (Gesamt)</p>
-                <p><strong>Typ:</strong> ${f.typ} | <strong>Glas:</strong> ${f.glas}</p>
-                <p><strong>Rollo:</strong> ${f.rolllo} ${f.rolllo!=='KEIN'?'(M:'+f.motor+'/K:'+f.kabel+')':''}</p>
+                <p><strong>Außenmaß:</strong> ${f.b} x ${f.h} mm (inkl. Rollo)</p>
+                <p><strong>Glas:</strong> ${f.glas} | <strong>Typ:</strong> ${f.typ}</p>
+                <p><strong>Rollo:</strong> ${f.rolllo} ${f.rolllo!=='KEIN'?'(Mot:'+f.motor+'/Kab:'+f.kabel+')':''}</p>
                 ${f.notizen ? `<div class="pdf-note">${f.notizen}</div>` : ''}
             </div>
         </div>`;
