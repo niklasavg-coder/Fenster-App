@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aufmaß Pro Ultra V10</title>
+    <title>Aufmaß Pro Ultra V11</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
@@ -19,23 +19,23 @@
             <main>
                 <div class="ios-card">
                     <div class="ios-row">
-                        <input type="text" id="projektName" placeholder="Projektname (z.B. Bauvorhaben Kassel) *" required>
+                        <input type="text" id="projektName" placeholder="Projektname (z.B. Neubau Kassel) *" required>
                     </div>
                 </div>
 
-                <h2 class="section-title">Element-Details</h2>
+                <h2 class="section-title">Element-Konfiguration</h2>
                 <div class="ios-card">
                     <div class="ios-row"><span class="label">Position</span><input type="text" id="position" placeholder="z.B. Pos. 01 / Wohnen"></div>
                     <div class="ios-row split">
                         <input type="number" id="breite" placeholder="Breite mm *" inputmode="numeric">
                         <div class="divider"></div>
-                        <input type="number" id="hoehe" placeholder="Höhe (Gesamt) *" inputmode="numeric">
+                        <input type="number" id="hoehe" placeholder="Gesamthöhe *" inputmode="numeric">
                     </div>
                     <div class="ios-row">
                         <span class="label">Element-Typ</span>
                         <select id="elemTyp" onchange="updateUI()">
                             <option value="1">1-flg. Fenster</option>
-                            <option value="2">2-flg. Stulp / Pfosten</option>
+                            <option value="2">2-flg. Stulp</option>
                             <option value="BT">Balkontür 1-flg.</option>
                             <option value="2BT">Balkontür 2-flg. Stulp</option>
                         </select>
@@ -50,21 +50,19 @@
                     </div>
                 </div>
 
-                <div id="config-wings">
-                    <h2 class="section-title">Flügel-Konfiguration</h2>
-                    <div class="ios-card">
-                        <div class="ios-row">
-                            <span class="label">Flügel 1 (Links)</span>
-                            <select id="typL"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
-                        </div>
-                        <div id="row-f2" class="ios-row" style="display:none;">
-                            <span class="label">Flügel 2 (Rechts)</span>
-                            <select id="typR"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
-                        </div>
-                        <div id="row-din" class="ios-row">
-                            <span class="label">DIN Richtung</span>
-                            <select id="dinRichtung"><option value="R">DIN Rechts (Griff L)</option><option value="L">DIN Links (Griff R)</option></select>
-                        </div>
+                <h2 class="section-title">Flügel & Anschlag</h2>
+                <div class="ios-card">
+                    <div class="ios-row">
+                        <span class="label">Flügel 1 (Links)</span>
+                        <select id="typL"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
+                    </div>
+                    <div id="row-f2" class="ios-row" style="display:none;">
+                        <span class="label">Flügel 2 (Rechts)</span>
+                        <select id="typR"><option value="DK">Dreh-Kipp</option><option value="D">Dreh</option><option value="FEST">Festverglast</option></select>
+                    </div>
+                    <div id="row-din" class="ios-row">
+                        <span class="label">Anschlag</span>
+                        <select id="dinRichtung"><option value="R">DIN Rechts (Griff L)</option><option value="L">DIN Links (Griff R)</option></select>
                     </div>
                 </div>
 
@@ -74,18 +72,19 @@
                         <span class="label">System</span>
                         <select id="rollloArt" onchange="updateUI()">
                             <option value="KEIN">Ohne Rollladen</option>
-                            <option value="AUFSATZ">Aufsatz (inkl. Kastenhöhe)</option>
+                            <option value="AUFSATZ">Aufsatz (inkl. Kasten)</option>
                             <option value="VOR">Vorsatz-Kasten</option>
                         </select>
                     </div>
                     <div id="motor-config" style="display:none;">
                         <div class="ios-row"><span class="label">Motorseite</span><select id="motorSeite"><option value="L">Links</option><option value="R">Rechts</option></select></div>
-                        <div class="ios-row"><span class="label">Kabelauslass</span><select id="kabelSeite"><option value="L">Links</option><option value="R">Rechts</option></select></div>
+                        <div class="ios-row"><span class="label">Kabelaustritt</span><select id="kabelSeite"><option value="L">Links</option><option value="R">Rechts</option></select></div>
                     </div>
                 </div>
 
-                <div class="ios-card" style="margin-top:20px;">
-                    <div class="ios-row-multiline"><textarea id="notizen" placeholder="Notizen (Profilsystem, FBA, Verbreiterungen...)" rows="3"></textarea></div>
+                <h2 class="section-title">Anmerkungen</h2>
+                <div class="ios-card">
+                    <div class="ios-row-multiline"><textarea id="notizen" placeholder="Sonderwünsche, FBA, Verbreiterungen..." rows="3"></textarea></div>
                 </div>
 
                 <div class="btn-group">
@@ -93,20 +92,31 @@
                     <button id="update-btn" class="ios-btn-update" style="display:none;" onclick="saveItem()">Änderung übernehmen</button>
                 </div>
 
-                <h2 class="section-title">Erfassung (<span id="count">0</span>)</h2>
+                <h2 class="section-title">Projekt-Liste (<span id="count">0</span>)</h2>
                 <div id="fenster-liste"></div>
-                <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">Vorschau & PDF erstellen</button>
-                <button id="btn-clear" class="ios-btn-danger" style="display:none;" onclick="clearAll()">Alle Daten löschen</button>
+                
+                <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">Vorschau & PDF</button>
+                <button id="btn-clear" class="ios-btn-danger" style="display:none;" onclick="clearAll()">Komplettes Projekt löschen</button>
             </main>
         </div>
 
         <div id="preview-view" class="view" style="display:none;">
-            <div class="iphone-nav">
-                <button class="back-btn" onclick="hidePreview()">← Edit</button>
-                <div class="nav-title">Vorschau</div>
-                <button class="print-btn" onclick="window.print()">Senden</button>
+            <nav class="premium-nav no-print">
+                <div class="nav-left">
+                    <button class="nav-btn-link" onclick="hidePreview()">Abbrechen</button>
+                </div>
+                <div class="nav-center">
+                    <span class="nav-title">Vorschau</span>
+                </div>
+                <div class="nav-right">
+                    <button class="nav-btn-action" onclick="window.print()">Senden</button>
+                </div>
+            </nav>
+            
+            <div class="preview-scroll-area">
+                <div class="paper-page" id="pdf-content">
+                    </div>
             </div>
-            <div class="paper-page" id="pdf-content"></div>
         </div>
     </div>
     <script src="script.js"></script>
