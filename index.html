@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profi-Aufmaß</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Profi-Aufmaß">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <h1>Profi-Aufmaß V1</h1>
+        </header>
+
+        <main id="content">
+            <div class="input-group">
+                <label>Breite (mm) RAM</label>
+                <input type="number" id="breite" placeholder="z.B. 1000" inputmode="numeric">
+            </div>
+
+            <div class="input-group">
+                <label>Höhe (mm) RAM</label>
+                <input type="number" id="hoehe" placeholder="z.B. 1200" inputmode="numeric">
+            </div>
+
+            <div class="input-group two-col">
+                <div>
+                    <label>Typ</label>
+                    <select id="typ">
+                        <option value="DK">Dreh-Kipp</option>
+                        <option value="D">Dreh</option>
+                        <option value="FEST">Festverglasung</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Richtung (Bänder)</label>
+                    <select id="richtung">
+                        <option value="L">DIN Links</option>
+                        <option value="R">DIN Rechts</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="skizzeErstellen()">Skizze generieren</button>
+            
+            <div id="skizzenContainer" style="display:none;">
+                <h2>Fertigungsskizze</h2>
+                <div id="svgWrapper"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
