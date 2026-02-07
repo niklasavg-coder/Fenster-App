@@ -1,4 +1,4 @@
-let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_V12')) || [];
+let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_V13')) || [];
 let editId = null;
 
 function updateUI() {
@@ -34,7 +34,7 @@ function saveItem() {
         fensterListe[idx] = data;
     } else { fensterListe.push(data); }
 
-    localStorage.setItem('FensterProDB_V12', JSON.stringify(fensterListe));
+    localStorage.setItem('FensterProDB_V13', JSON.stringify(fensterListe));
     resetForm(); render();
 }
 
@@ -72,7 +72,7 @@ function render() {
     document.getElementById('btn-preview').style.display = fensterListe.length > 0 ? 'block' : 'none';
 }
 
-function remove(id) { if(confirm("Löschen?")) { fensterListe = fensterListe.filter(x => x.id !== id); localStorage.setItem('FensterProDB_V12', JSON.stringify(fensterListe)); render(); } }
+function remove(id) { if(confirm("Löschen?")) { fensterListe = fensterListe.filter(x => x.id !== id); localStorage.setItem('FensterProDB_V13', JSON.stringify(fensterListe)); render(); } }
 
 function generateSVG(f) {
     const is2flg = f.typ.includes('Stulp');
@@ -81,7 +81,7 @@ function generateSVG(f) {
     const frameTop = hasAufsatz ? 80 : 0;
     const frameHeight = 400 - frameTop;
 
-    let svg = `<svg viewBox="-110 -130 500 640" xmlns="http://www.w3.org/2000/svg" style="background:white;">
+    let svg = `<svg viewBox="-120 -130 510 650" xmlns="http://www.w3.org/2000/svg" style="background:white;">
         <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#000" /></marker></defs>`;
 
     if(hasAufsatz) {
@@ -95,16 +95,27 @@ function generateSVG(f) {
 
     svg += `<rect x="0" y="${frameTop}" width="300" height="${frameHeight}" fill="none" stroke="#000" stroke-width="4" />`;
 
-    // Maßketten (Nach rechts/innen verschoben für Safe Area)
-    svg += `<line x1="0" y1="-90" x2="300" y2="-90" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <text x="150" y="-105" text-anchor="middle" font-size="30" font-weight="bold">${f.b} mm</text>
-            <line x1="-100" y1="10" x2="-100" y2="390" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-            <text x="-115" y="200" text-anchor="middle" transform="rotate(-90, -115, 200)" font-size="30" font-weight="bold">${f.h} mm</text>`;
+    // Maßketten (Für iPhone 16 Pro Safe Area optimiert)
+    svg += `<line x1="0" y1="-95" x2="300" y2="-95" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="150" y="-110" text-anchor="middle" font-size="32" font-weight="bold">${f.b} mm</text>
+            <line x1="-110" y1="10" x2="-110" y2="390" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="-125" y="200" text-anchor="middle" transform="rotate(-90, -125, 200)" font-size="32" font-weight="bold">${f.h} mm</text>`;
 
     const drawDIN = (x, w, typ, din) => {
         if(typ === 'Festverglast') return "";
         const hingeR = (din === 'Rechts');
-        let res = `<polyline points="${hingeR?x+w-12:x+12},${frameTop+18} ${hingeR?x+12:x+w-12},${frameTop+(frameHeight/2)} ${hingeR?x+w-12:x+12},${382}" fill="none" stroke="#666" stroke-dasharray="12,6" />`;
+        const isMittig = (din === 'Mittig');
+        
+        let res = "";
+        if (isMittig) {
+            // Mittige Öffnungssymbolik (Stulp-Stil)
+            res += `<polyline points="${x+5},${frameTop+15} ${x+w/2},${frameTop+(frameHeight/2)} ${x+5},${385}" fill="none" stroke="#666" stroke-dasharray="12,6" />`;
+            res += `<polyline points="${x+w-5},${frameTop+15} ${x+w/2},${frameTop+(frameHeight/2)} ${x+w-5},${385}" fill="none" stroke="#666" stroke-dasharray="12,6" />`;
+        } else {
+            // Standard DIN L/R Dreh-Symbol
+            res += `<polyline points="${hingeR?x+w-12:x+12},${frameTop+18} ${hingeR?x+12:x+w-12},${frameTop+(frameHeight/2)} ${hingeR?x+w-12:x+12},${382}" fill="none" stroke="#666" stroke-dasharray="12,6" />`;
+        }
+        
         // Kipp-Symbol: SPITZE NACH OBEN
         if(typ === 'Dreh-Kipp') res += `<polyline points="${x+18},382 ${x+w/2},${frameTop+18} ${x+w-18},382" fill="none" stroke="#666" stroke-dasharray="12,6" />`;
         return res;
@@ -129,19 +140,18 @@ function showPreview() {
             <div class="pdf-svg">${generateSVG(f)}</div>
             <div class="pdf-data">
                 <h3>${f.pos}</h3>
-                <p><strong>Gesamt-Außenmaß:</strong> ${f.b} x ${f.h} mm</p>
-                <p><strong>Element-Typ:</strong> ${f.typ}</p>
-                <p><strong>Anschlag:</strong> DIN ${f.din}</p>
-                <p><strong>Flügel 1:</strong> ${f.typL}${is2flg(f)?' / <strong>Flügel 2:</strong> '+f.typR:''}</p>
+                <p><strong>Außenmaß:</strong> ${f.b} x ${f.h} mm</p>
+                <p><strong>Element-Art:</strong> ${f.typ}</p>
+                <p><strong>Richtung / Griff:</strong> ${f.din}</p>
+                <p><strong>Funktion:</strong> ${f.typL}${f.typ.includes('Stulp')?' / '+f.typR:''}</p>
                 <p><strong>Glas:</strong> ${f.glas}</p>
                 <p><strong>Rollladen:</strong> ${f.rolllo} ${f.rolllo!=='Kein Rollladen'?'<br> (Motor: '+f.motor+' / Kabelaustritt: '+f.kabel+')':''}</p>
-                ${f.notizen ? `<div class="pdf-note"><strong>Anmerkung:</strong> ${f.notizen}</div>` : ''}
+                ${f.notizen ? `<div class="pdf-note"><strong>Notiz:</strong> ${f.notizen}</div>` : ''}
             </div>
         </div>`;
     });
     document.getElementById('pdf-content').innerHTML = html; window.scrollTo(0,0);
 }
-function is2flg(f) { return f.typ.includes('Stulp'); }
 function hidePreview() { document.getElementById('preview-view').style.display = 'none'; document.getElementById('input-view').style.display = 'block'; }
 function resetForm() { document.getElementById('position').value = ""; document.getElementById('breite').value = ""; document.getElementById('hoehe').value = ""; document.getElementById('notizen').value = ""; document.getElementById('add-btn').style.display = 'block'; document.getElementById('update-btn').style.display = 'none'; editId = null; }
 document.getElementById('header-date').innerText = new Date().toLocaleDateString('de-DE');

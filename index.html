@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aufmaß Pro V12</title>
+    <title>Aufmaß Pro Ultra V13</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
@@ -23,13 +23,13 @@
                     </div>
                 </div>
 
-                <h2 class="section-title">Element</h2>
+                <h2 class="section-title">Element-Basis</h2>
                 <div class="ios-card">
                     <div class="ios-row"><span class="label">Position</span><input type="text" id="position" placeholder="z.B. Pos. 01 / Küche"></div>
                     <div class="ios-row split">
                         <input type="number" id="breite" placeholder="Breite mm *" inputmode="numeric">
                         <div class="divider"></div>
-                        <input type="number" id="hoehe" placeholder="Höhe (inkl. Rollo) *" inputmode="numeric">
+                        <input type="number" id="hoehe" placeholder="Höhe mm *" inputmode="numeric">
                     </div>
                     <div class="ios-row">
                         <span class="label">Element</span>
@@ -41,7 +41,7 @@
                         </select>
                     </div>
                     <div class="ios-row">
-                        <span class="label">Glas</span>
+                        <span class="label">Verglasung</span>
                         <select id="glasTyp">
                             <option value="3-fach Isolierglas">3-fach Isolierglas</option>
                             <option value="2-fach Isolierglas">2-fach Isolierglas</option>
@@ -53,14 +53,15 @@
                 <h2 class="section-title">Anschlag & Funktion</h2>
                 <div class="ios-card">
                     <div class="ios-row">
-                        <span class="label">DIN-Richtung</span>
+                        <span class="label">Richtung / Griff</span>
                         <select id="dinRichtung">
-                            <option value="Rechts">DIN Rechts (Flügel öffnet nach Rechts)</option>
-                            <option value="Links">DIN Links (Flügel öffnet nach Links)</option>
+                            <option value="Rechts">DIN Rechts (Griff Links)</option>
+                            <option value="Links">DIN Links (Griff Rechts)</option>
+                            <option value="Mittig">Mittig (Stulp / Mittelgriff)</option>
                         </select>
                     </div>
                     <div class="ios-row">
-                        <span class="label">Funktion Links</span>
+                        <span class="label">Flügel Links</span>
                         <select id="typL">
                             <option value="Dreh-Kipp">Dreh-Kipp</option>
                             <option value="Dreh">Dreh</option>
@@ -68,7 +69,7 @@
                         </select>
                     </div>
                     <div id="row-f2" class="ios-row" style="display:none;">
-                        <span class="label">Funktion Rechts</span>
+                        <span class="label">Flügel Rechts</span>
                         <select id="typR">
                             <option value="Dreh-Kipp">Dreh-Kipp</option>
                             <option value="Dreh">Dreh</option>
@@ -89,22 +90,20 @@
                     </div>
                     <div id="motor-config" style="display:none;">
                         <div class="ios-row"><span class="label">Motorseite</span><select id="motorSeite"><option value="Links">Links</option><option value="Rechts">Rechts</option></select></div>
-                        <div class="ios-row"><span class="label">Kabelaustritt</span><select id="kabelSeite"><option value="Links">Links</option><option value="Rechts">Rechts</option></select></div>
+                        <div class="ios-row"><span class="label">Kabelauslass</span><select id="kabelSeite"><option value="Links">Links</option><option value="Rechts">Rechts</option></select></div>
                     </div>
                 </div>
 
                 <div class="ios-card" style="margin-top:20px;">
-                    <div class="ios-row-multiline"><textarea id="notizen" placeholder="Zusätzliche Notizen..." rows="3"></textarea></div>
+                    <div class="ios-row-multiline"><textarea id="notizen" placeholder="Anmerkungen (FBA, Verbreiterungen...)" rows="3"></textarea></div>
                 </div>
 
                 <div class="btn-group">
-                    <button id="add-btn" class="ios-btn-add" onclick="saveItem()">+ In Liste speichern</button>
+                    <button id="add-btn" class="ios-btn-add" onclick="saveItem()">+ Speichern</button>
                     <button id="update-btn" class="ios-btn-update" style="display:none;" onclick="saveItem()">Änderung speichern</button>
                 </div>
 
-                <h2 class="section-title">Liste (<span id="count">0</span>)</h2>
                 <div id="fenster-liste"></div>
-                
                 <button id="btn-preview" class="ios-btn-primary" style="display:none;" onclick="showPreview()">Vorschau & PDF</button>
             </main>
         </div>
