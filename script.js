@@ -1,11 +1,13 @@
-let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_v2')) || [];
+let fensterListe = JSON.parse(localStorage.getItem('FensterProDB_v7')) || [];
 let editId = null;
 
 function updateUI() {
     const elem = document.getElementById('elemTyp').value;
     const rolllo = document.getElementById('rollloArt').value;
-    document.getElementById('row-typR').style.display = (elem === '2' || elem === '2BT') ? 'flex' : 'none';
-    document.getElementById('motor-box').style.display = (rolllo !== 'KEIN') ? 'block' : 'none';
+    
+    document.getElementById('row-din').style.display = (elem === '1' || elem === 'BT') ? 'flex' : 'none';
+    document.getElementById('row-griff2').style.display = (elem === '2' || elem === '2BT') ? 'flex' : 'none';
+    document.getElementById('motor-config').style.display = (rolllo !== 'KEIN') ? 'block' : 'none';
 }
 
 function saveItem() {
@@ -13,15 +15,15 @@ function saveItem() {
     const b = document.getElementById('breite').value;
     const h = document.getElementById('hoehe').value;
     
-    if(!proj || !b || !h) return alert("Fehler: Projekt, Breite und Höhe sind Pflichtfelder!");
+    if(!proj || !b || !h) return alert("Projekt, Breite und Höhe sind Pflicht!");
 
     const data = {
         proj, b, h,
-        sys: document.getElementById('systemName').value,
         pos: document.getElementById('position').value || "Fenster",
         typ: document.getElementById('elemTyp').value,
-        typL: document.getElementById('typL').value,
-        typR: document.getElementById('typR').value,
+        glas: document.getElementById('glasTyp').value,
+        din: document.getElementById('dinRichtung').value,
+        griff2: document.getElementById('griffSitz2').value,
         rolllo: document.getElementById('rollloArt').value,
         motor: document.getElementById('motorSeite').value,
         kabel: document.getElementById('kabelSeite').value,
@@ -36,9 +38,19 @@ function saveItem() {
         fensterListe.push(data);
     }
 
-    localStorage.setItem('FensterProDB_v2', JSON.stringify(fensterListe));
+    localStorage.setItem('FensterProDB_v7', JSON.stringify(fensterListe));
     resetForm();
     render();
+}
+
+function resetForm() {
+    document.getElementById('position').value = "";
+    document.getElementById('breite').value = "";
+    document.getElementById('hoehe').value = "";
+    document.getElementById('notizen').value = "";
+    document.getElementById('add-btn').style.display = 'block';
+    document.getElementById('update-btn').style.display = 'none';
+    editId = null;
 }
 
 function edit(id) {
@@ -48,8 +60,9 @@ function edit(id) {
     document.getElementById('breite').value = f.b;
     document.getElementById('hoehe').value = f.h;
     document.getElementById('elemTyp').value = f.typ;
-    document.getElementById('typL').value = f.typL;
-    document.getElementById('typR').value = f.typR;
+    document.getElementById('glasTyp').value = f.glas;
+    document.getElementById('dinRichtung').value = f.din;
+    document.getElementById('griffSitz2').value = f.griff2;
     document.getElementById('rollloArt').value = f.rolllo;
     document.getElementById('motorSeite').value = f.motor;
     document.getElementById('kabelSeite').value = f.kabel;
@@ -62,16 +75,9 @@ function edit(id) {
 }
 
 function remove(id) {
-    if(!confirm("Eintrag unwiderruflich löschen?")) return;
+    if(!confirm("Löschen?")) return;
     fensterListe = fensterListe.filter(x => x.id !== id);
-    localStorage.setItem('FensterProDB_v2', JSON.stringify(fensterListe));
-    render();
-}
-
-function clearAll() {
-    if(!confirm("Gesamtes Projekt löschen?")) return;
-    fensterListe = [];
-    localStorage.removeItem('FensterProDB_v2');
+    localStorage.setItem('FensterProDB_v7', JSON.stringify(fensterListe));
     render();
 }
 
@@ -90,53 +96,53 @@ function render() {
     document.getElementById('btn-clear').style.display = fensterListe.length > 0 ? 'block' : 'none';
 }
 
+function clearAll() { if(confirm("Gesamtes Projekt löschen?")) { fensterListe = []; localStorage.removeItem('FensterProDB_v7'); render(); } }
+
 function generateSVG(f) {
     const is2flg = (f.typ === '2' || f.typ === '2BT');
     const isBT = (f.typ === 'BT' || f.typ === '2BT');
     const hasAufsatz = (f.rolllo === 'AUFSATZ');
+    const boxHeight = 210; // Standard Aufsatzkasten-Höhe
 
-    let svg = `<svg viewBox="-70 -110 440 580" xmlns="http://www.w3.org/2000/svg" style="background:white;">
+    let svg = `<svg viewBox="-80 -120 450 600" xmlns="http://www.w3.org/2000/svg" style="background:white;">
         <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#000" /></marker></defs>`;
 
-    // AUFSATZROLLO VISUALISIERUNG
     if(hasAufsatz) {
-        svg += `<rect x="0" y="-50" width="300" height="50" fill="#f0f0f0" stroke="#000" stroke-width="2" />
-                <text x="150" y="-20" text-anchor="middle" font-size="14" font-weight="bold">AUFSATZROLLO</text>`;
+        svg += `<rect x="0" y="-50" width="300" height="50" fill="#eee" stroke="#000" stroke-width="2" />
+                <text x="150" y="-32" text-anchor="middle" font-size="12" font-weight="bold">AUFSATZROLLO</text>`;
+        // Markierung auf dem Kasten
+        const motX = f.motor === 'L' ? 20 : 280;
+        const kabX = f.kabel === 'L' ? 40 : 260;
+        svg += `<circle cx="${motX}" cy="-25" r="5" fill="blue" /> <text x="${motX}" y="-10" text-anchor="middle" font-size="8" fill="blue">MOTOR</text>`;
+        svg += `<circle cx="${kabX}" cy="-25" r="5" fill="red" /> <text x="${kabX}" y="-10" text-anchor="middle" font-size="8" fill="red">KABEL</text>`;
     }
 
     svg += `<rect x="0" y="0" width="300" height="400" fill="none" stroke="#000" stroke-width="4" />`;
 
-    // DIN MAẞKETTEN (Außen liegend)
-    svg += `
-        <line x1="0" y1="-65" x2="300" y2="-65" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-        <text x="150" y="-75" text-anchor="middle" font-size="24" font-weight="bold">${f.b}</text>
-        <line x1="-55" y1="0" x2="-55" y2="400" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
-        <text x="-65" y="200" text-anchor="middle" transform="rotate(-90, -65, 200)" font-size="24" font-weight="bold">${f.h}</text>`;
+    // Maßketten
+    svg += `<line x1="10" y1="-70" x2="290" y2="-70" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="150" y="-80" text-anchor="middle" font-size="22" font-weight="bold">${f.b} mm</text>
+            <line x1="-60" y1="10" x2="-60" y2="390" stroke="#000" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+            <text x="-70" y="200" text-anchor="middle" transform="rotate(-90, -70, 200)" font-size="22" font-weight="bold">${f.h} mm</text>`;
 
-    // DIN ÖFFNUNGSSYMBOLE (2-fach Dreieck für DK)
-    const drawDIN = (x, w, typ) => {
-        if(typ === 'FEST') return "";
+    const drawDIN = (x, w, side) => {
         // Dreh-Symbol
-        let res = `<polyline points="${x+w-5},10 ${x+10},200 ${x+w-5},390" fill="none" stroke="#666" stroke-dasharray="8,4" />`;
-        // Kipp-Symbol (V-Form nach unten)
-        if(typ === 'DK') res += `<polyline points="${x+10},10 ${x+w/2},390 ${x+w-10},10" fill="none" stroke="#666" stroke-dasharray="8,4" />`;
+        let res = `<polyline points="${side==='R'?x+w-5:x+5},10 ${side==='R'?x+5:x+w-5},200 ${side==='R'?x+w-5:x+5},390" fill="none" stroke="#666" stroke-dasharray="8,4" />`;
+        // Kipp-Symbol (Spitze nach OBEN)
+        res += `<polyline points="${x+5},390 ${x+w/2},10 ${x+w-5},390" fill="none" stroke="#666" stroke-dasharray="8,4" />`;
         return res;
     };
 
     if(is2flg) {
         svg += `<line x1="150" y1="0" x2="150" y2="400" stroke="#000" stroke-width="2" />`;
-        svg += drawDIN(0, 150, f.typL) + drawDIN(150, 150, f.typR);
+        svg += drawDIN(0, 150, f.griff2 === 'L' ? 'R' : 'L'); 
+        svg += drawDIN(150, 150, f.griff2 === 'R' ? 'L' : 'R');
     } else {
-        svg += drawDIN(0, 300, f.typL);
+        svg += drawDIN(0, 300, f.din);
     }
 
     if(isBT) svg += `<line x1="0" y1="395" x2="300" y2="395" stroke="#000" stroke-width="1.5" />`;
 
-    if(f.rolllo !== 'KEIN') {
-        const kX = f.kabel === 'L' ? 15 : 285;
-        svg += `<circle cx="${kX}" cy="15" r="12" fill="red" stroke="white" stroke-width="2" />
-                <text x="${kX}" y="45" text-anchor="middle" font-size="12" fill="red" font-weight="bold">Kabel</text>`;
-    }
     return svg + `</svg>`;
 }
 
@@ -144,25 +150,17 @@ function showPreview() {
     document.getElementById('input-view').style.display = 'none';
     document.getElementById('preview-view').style.display = 'block';
     const proj = document.getElementById('projektName').value;
-    const sys = document.getElementById('systemName').value || "Standard";
     
-    let html = `
-        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-            <div><h2 style="margin:0;">Projekt: ${proj}</h2><p style="margin:5px 0 0;">System: ${sys}</p></div>
-            <div style="font-size:10px; color:#888;">Erstellt am: ${new Date().toLocaleDateString()}</div>
-        </div><hr style="border:1px solid #000; margin:15px 0;">`;
-    
+    let html = `<h2>Projekt: ${proj}</h2><p>Datum: ${new Date().toLocaleDateString()}</p><hr>`;
     fensterListe.forEach(f => {
-        html += `
-        <div class="pdf-item">
+        html += `<div class="pdf-item">
             <div class="pdf-svg">${generateSVG(f)}</div>
             <div class="pdf-data">
                 <h3>${f.pos}</h3>
-                <p><strong>RAM:</strong> ${f.b} x ${f.h} mm</p>
-                <p><strong>Typ:</strong> ${f.typ === '1' ? '1-flg. Fenster' : f.typ === '2' ? '2-flg. Stulp' : 'Balkontür'}</p>
-                <p><strong>Beschlag:</strong> L:${f.typL} / R:${f.typR}</p>
-                <p><strong>Rollo:</strong> ${f.rolllo !== 'KEIN' ? f.rolllo + ' (Mot:' + f.motor + '/Kab:' + f.kabel + ')' : 'Nein'}</p>
-                ${f.notizen ? `<div class="pdf-note-box"><strong>Notiz:</strong> ${f.notizen}</div>` : ''}
+                <p><strong>Außenmaß:</strong> ${f.b} x ${f.h} mm</p>
+                <p><strong>Typ:</strong> ${f.typ} | <strong>Glas:</strong> ${f.glas}</p>
+                <p><strong>Rollo:</strong> ${f.rolllo} (Mot:${f.motor}/Kab:${f.kabel})</p>
+                ${f.notizen ? `<div class="pdf-note"><strong>Notiz:</strong> ${f.notizen}</div>` : ''}
             </div>
         </div>`;
     });
@@ -171,8 +169,5 @@ function showPreview() {
 }
 
 function hidePreview() { document.getElementById('preview-view').style.display = 'none'; document.getElementById('input-view').style.display = 'block'; }
-function resetForm() { document.getElementById('position').value = ""; document.getElementById('breite').value = ""; document.getElementById('hoehe').value = ""; document.getElementById('notizen').value = ""; document.getElementById('add-btn').style.display = 'block'; document.getElementById('update-btn').style.display = 'none'; editId = null; }
-
 document.getElementById('header-date').innerText = new Date().toLocaleDateString('de-DE');
-render();
-updateUI();
+render(); updateUI();
